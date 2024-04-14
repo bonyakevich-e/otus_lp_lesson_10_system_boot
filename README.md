@@ -21,10 +21,10 @@
 
 В конце строки, начинающейся с _linux16_, добавляем __rd.break__ и нажимаем __сtrl-x__ для загрузки в систему. Попадаем в emergency mode. Наша корневая файловая система смонтирована (опять же в режиме Read-Only, но мы не в ней). Далее будет пример, как попасть в нее и поменять пароль администратора:
 ```
-[root@otuslinux ~]# mount -o remount,rw /sysroot
-[root@otuslinux ~]# chroot /sysroot
-[root@otuslinux ~]# passwd root
-[root@otuslinux ~]# touch /.autorelabel
+[root@packages ~]# mount -o remount,rw /sysroot
+[root@packages ~]# chroot /sysroot
+[root@packages ~]# passwd root
+[root@packages ~]# touch /.autorelabel
 ```
 После чего можно перезагружаться и заходить в систему с новым паролем. Полезно, когда мы потеряли или вообще не имели пароля администратора.
 
@@ -40,7 +40,7 @@
 
 #### ЗАДАНИЕ 2. Установить систему с LVM, после чего переименовать VG
 
-1. Смотри текущее состояние LVM:
+1. Смотрим текущее состояние LVM:
 ```
 [root@packages vagrant]# vgs
   VG         #PV #LV #SN Attr   VSize   VFree
@@ -54,5 +54,12 @@
 3. Правим __/etc/fstab, /etc/default/grub, /boot/grub2/grub.cfg__. Везде заменяем старое название на новое.
 > [!NOTE]
 > параметр __rd.lvm.lv__ в /etc/default/grub - активировать при загрузке только указанные логические тома
-5. 
 
+5. Пересоздаем initrd image, чтобы он знал новое название Volume Group:
+```
+[root@packages vagrant]# mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+...
+...
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
+```
+6. Перезагружаемся и проверяем что мы загрузились с новым именем Volume Group
