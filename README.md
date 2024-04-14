@@ -114,5 +114,13 @@ echo " continuing...."
 ...
 *** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
 ```
-4. Чтобы проверить какие модули загружены в образ 
-     
+4. Чтобы проверить какие модули загружены в образ
+```
+[root@packages vagrant]# lsinitrd -m /boot/initramfs-$(uname -r).img
+```
+5. Для проверки убираем в /etc/default/grub параметры __rghb__ и __quiet__. Обновляем grub конфиг:
+```
+[root@packages vagrant]# grub2-mkconfig -o /boot/grub2/grub.cfg
+```
+Перезагружаемся и видим логотип linux при загрузке
+![VirtualBox_lp_lesson_10_system_boot_packages_1713079955445_15902_14_04_2024_12_28_03](https://github.com/bonyakevich-e/otus_lp_lesson_10_system_boot/assets/114911797/8aa1588f-8c48-436b-a2db-f9642cc472e7)
