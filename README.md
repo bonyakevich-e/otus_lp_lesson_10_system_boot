@@ -63,3 +63,56 @@
 *** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
 ```
 6. Перезагружаемся и проверяем что мы загрузились с новым именем Volume Group
+
+#### ЗАДАНИЕ 3. Добавить модуль в intird
+
+1. Скрипты модулей хранятся в каталоге /usr/lib/dracut/modules.d/. Для того, чтобы добавить свой модуль, создаем там папку с именем 01test
+2. В этой папке поместим два скрипта:
+- __module-setup.sh__, который устанавливает модуль и вызывает скрипт test.sh
+```
+    #!/bin/bash
+
+check() {
+    return 0
+}
+
+depends() {
+    return 0
+}
+
+install() {
+    inst_hook cleanup 00 "${moddir}/test.sh"
+}
+```
+- __test.sh__ - сам вызываемый скрипт, который отрисовывает логотип linux
+```
+#!/bin/bash
+
+exec 0<>/dev/console 1<>/dev/console 2<>/dev/console
+cat <<'msgend'
+Hello! You are in dracut module!
+ ___________________
+< I'm dracut module >
+ -------------------
+   \
+    \
+        .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /'\_   _/`\
+    \___)=(___/
+msgend
+sleep 10
+echo " continuing...."
+```
+3. Пересобираем образ __initrd__:
+```
+[root@packages vagrant]# mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+...
+...
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
+```
+4. Чтобы проверить какие модули загружены в образ 
+     
